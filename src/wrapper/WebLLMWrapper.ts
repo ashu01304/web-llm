@@ -1,5 +1,5 @@
 import {
-  CreateWebWorkerMLCEngine,
+  CreateMLCEngine,
   prebuiltAppConfig,
   hasModelInCache,
   deleteModelAllInfoInCache,
@@ -9,7 +9,6 @@ import {
 
 export class WebLLM {
   private engine: MLCEngineInterface | null = null;
-  private worker: Worker | null = null;
   private messages: ChatCompletionMessageParam[] = [];
   public downloadProgress: Record<string, string> = {};
 
@@ -28,15 +27,9 @@ export class WebLLM {
 
   public async download_model(
     model_id: string,
-    progressCallback?: (progress: string) => void,
-    // @ts-ignore: TS1343 complains about es6 target instead of es2020
-    workerUrl: string | URL = import.meta.url
+    progressCallback?: (progress: string) => void
   ): Promise<void> {
-    if (!this.worker) {
-      this.worker = new Worker(workerUrl, { type: "module" });
-    }
-    
-    this.engine = await CreateWebWorkerMLCEngine(this.worker, model_id, {
+    this.engine = await CreateMLCEngine(model_id, {
       initProgressCallback: (progress) => {
         this.downloadProgress[model_id] = progress.text;
         if (progressCallback) progressCallback(progress.text);

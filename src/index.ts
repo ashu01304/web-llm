@@ -61,13 +61,4 @@ export {
 
 export * from "./openai_api_protocols/index";
 export * from "./wrapper/WebLLMWrapper";
-import { WebWorkerMLCEngineHandler } from "./web_worker";
-
-// Monolithic Web Worker Configuration
-// This enables the compiled library to act as its own Web Worker seamlessly.
-if (typeof WorkerGlobalScope !== 'undefined' && typeof self !== 'undefined' && self instanceof WorkerGlobalScope) {
-    const handler = new WebWorkerMLCEngineHandler();
-    self.onmessage = (msg: MessageEvent) => {
-        handler.onmessage(msg);
-    };
-}
+// Core library natively exports the WebLLM wrapper now.
